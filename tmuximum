@@ -12,7 +12,7 @@ function tmuximum::help() {
 function tmuximum::operation() {
   answer=$(tmuximum::operation-list | "${filter[@]}" )
   case $answer in
-    *new\ session* ) tmux new-session ;;
+    *new\ session* ) tmux new-session \; split-window -hp 50 \; select-pane -L \; split-window -vp 50 \; select-pane -L \; split-window -vp 50 \; select-pane -L \; select-pane -U ;;
     *new\ window* ) tmux new-window ;;
     "kill sessions" ) tmuximum::kill-session ;;
     "kill windows" ) tmuximum::kill-window ;;
@@ -24,16 +24,16 @@ function tmuximum::operation() {
 
 function tmuximum::operation-list() {
   if [ -z $TMUX ]; then
+    echo -e "${GREEN}attach${DEFAULT} ==> [ ${BLUE}new session${DEFAULT} ]"
     tmux list-sessions 2>/dev/null | while read line; do
       [[ ! "$line" =~ "attached" ]] || line="${GREEN}$line${DEFAULT}"
       echo -e "${GREEN}attach${DEFAULT} ==> [ "$line" ]"
     done
-    echo -e "${GREEN}attach${DEFAULT} ==> [ ${BLUE}new session${DEFAULT} ]"
   else
+    echo -e "${CYAN}switch${DEFAULT} ==> [ ${BLUE}new window${DEFAULT} ]"
     tmux list-windows | sed "/active/d" | while read line; do
       echo -e "${CYAN}switch${DEFAULT} ==> [ $(echo $line | awk '{print $1 " " $2 " " $3 " " $4 " " $5}') ]"
     done
-   echo -e "${CYAN}switch${DEFAULT} ==> [ ${BLUE}new window${DEFAULT} ]"
     echo "detach"
     if (( $(tmux display-message -p '#{session_windows}') > 1 )); then
       echo -e "${RED}kill windows${DEFAULT}" 
@@ -111,8 +111,8 @@ function set-filter() {
   while [[ -n $filters ]]; do
   filter=${filters%%:*}
     if type "$filter" >/dev/null 2>&1; then
-      [[ "$filter" = "fzf" ]] && filter=($filter --ansi --prompt=tmuximum\ \>)
-      [[ "$filter" = "fzf-tmux" ]] && filter=($filter -r --ansi --prompt=tmuximum\ \>)
+      [[ "$filter" = "fzf" ]] && filter=($filter --reverse --ansi --prompt=tmuximum\ \>)
+      [[ "$filter" = "fzf-tmux" ]] && filter=($filter --reverse -r --ansi --prompt=tmuximum\ \>)
       return 0
     else
       filters="${filters#*:}"
