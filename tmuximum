@@ -12,7 +12,7 @@ function tmuximum::help() {
 function tmuximum::operation() {
   answer=$(tmuximum::operation-list | "${filter[@]}" )
   case $answer in
-    *new\ session* ) tmux new-session \; split-window -hp 50 \; select-pane -L \; split-window -vp 50 \; select-pane -L \; split-window -vp 50 \; select-pane -L \; select-pane -U ;;
+    *new\ session* ) tmux new-session \; split-window -hp 50 \; split-window -vp 50 \; select-pane -L ;;
     *new\ window* ) tmux new-window ;;
     "kill sessions" ) tmuximum::kill-session ;;
     "kill windows" ) tmuximum::kill-window ;;
