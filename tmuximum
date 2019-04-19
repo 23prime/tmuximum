@@ -17,7 +17,8 @@ function tmuximum::operation() {
     "kill sessions" ) tmuximum::kill-session ;;
     "kill windows" ) tmuximum::kill-window ;;
     *switch* ) tmux select-window -t $(echo  "$answer" | awk '{print $4}' | sed "s/://g") ;;
-    *attach* ) tmux attach -t $(echo "$answer" | awk '{print $4}' | sed 's/://') ;;
+    # *attach* ) name=$(echo "$answer" | awk '{print $4}' | sed 's/://') && tmux attach -t $name ;;
+    *attach* ) name=$(echo "$answer" | awk '{print $4}' | sed 's/://') && guake --rename-current-tab=$name && tmux attach -t $name ;;
     "detach" ) tmux detach-client ;;
   esac
 }
